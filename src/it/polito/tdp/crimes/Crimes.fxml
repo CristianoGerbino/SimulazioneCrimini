@@ -36,7 +36,7 @@
                   <Label text="Mese" GridPane.rowIndex="1" />
                   <Label text="Giorno" GridPane.rowIndex="2" />
                   <ComboBox fx:id="boxAnno" prefWidth="150.0" GridPane.columnIndex="1" />
-                  <ComboBox fx:id="boxMese" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="boxMese" onAction="#doPopolaGiorni" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <ComboBox fx:id="boxGiorno" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Button fx:id="btnCreaReteCittadina" mnemonicParsing="false" onAction="#doCreaReteCittadina" text="Rete Cittadina" GridPane.columnIndex="2" />
                   <Button fx:id="btnSimula" mnemonicParsing="false" onAction="#doSimula" text="Simula" GridPane.columnIndex="2" GridPane.rowIndex="1" />

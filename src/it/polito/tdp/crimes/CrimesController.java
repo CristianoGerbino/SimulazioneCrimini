@@ -5,6 +5,8 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,10 +36,10 @@ public class CrimesController {
     private ComboBox<Year> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Month> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -53,6 +55,7 @@ public class CrimesController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
+    	this.txtResult.clear();
     	Year year = this.boxAnno.getValue();
     	if (year == null) {
     		this.txtResult.appendText("Seleziona un anno!\n");
@@ -72,13 +75,68 @@ public class CrimesController {
     		for (ArcoVicino a : vicini)
     		this.txtResult.appendText("-"+a.toString()+"\n");
     	}
+    	this.boxAnno.setDisable(true);
     	
+    	
+    }
+    
+    
+    @FXML
+    void doPopolaGiorni(ActionEvent event) {
+    	Month month = this.boxMese.getValue();
+    	
+    	for (Integer i = 0; i<32; i++) {
+    		if (month.equals(Month.FEBRUARY) && i == 29 ) 
+    			break;
+    		
+    		
+    		if ( (month.equals(Month.APRIL) || month.equals(Month.JUNE) || 
+    			month.equals(Month.SEPTEMBER) || month.equals(Month.NOVEMBER)) && i == 31) 
+    			break;
+    		
+    			this.boxGiorno.getItems().add(i);
+    				
+    		}
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if (model.getGrafo() == null) {
+    		this.txtResult.appendText("Errore, devi creare prima una rete cittadina!\n");
+    		return;
+    	}
+    	
+    	Year year = this.boxAnno.getValue();
+    	if (year == null) {
+    		this.txtResult.appendText("Errore: seleziona un anno!\n");
+    		return;
+    	}
+    	
+    	Month month = this.boxMese.getValue();
+    	if (month == null) {
+    		this.txtResult.appendText("Errore: seleziona un mese!\n");
+    		return;
+    	}
+    	
+    	Integer day = this.boxGiorno.getValue();
+    	if (day == null) {
+    		this.txtResult.appendText("Errore: seleziona un giorno!\n");
+    	}
+    	String nAgenti = this.txtN.getText().trim();
+    	if (!nAgenti.matches("^[1-9]$") && !nAgenti.matches("^10$")) {
+    		this.txtResult.appendText("Errore: inserisci un numero da 1 a 10!\n");
+    		return;
+    	}
+    	
+    	int numAgenti = Integer.parseInt(nAgenti);
+    	int distretto = model.trovaDistrettoMinCriminalita(year);
+    	LocalDate data = LocalDate.of(year.getValue(), month.getValue(), day);
+    	this.txtResult.appendText("SIMULAZIONE CRIMINI\n");
+    	this.txtResult.appendText("Distretto "+distretto+" giorno "+data+" "+numAgenti+" agenti:\n");
+    	this.txtResult.appendText("Numero eventi malgestiti: "+model.simula(year, month, day, numAgenti, distretto));
     }
+
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -95,5 +153,9 @@ public class CrimesController {
     public void setModel(Model model) {
     	this.model = model;
     	this.boxAnno.getItems().addAll(model.getYears());
+    	
+    	for (Month m : Month.values()) { 
+    		this.boxMese.getItems().add(m);
+    	}
     }
 }

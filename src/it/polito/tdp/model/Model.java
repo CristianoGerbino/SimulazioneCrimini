@@ -1,5 +1,6 @@
 package it.polito.tdp.model;
 
+import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,15 +70,26 @@ public class Model {
 		List<ArcoVicino> vicini = new ArrayList<ArcoVicino>();
 		for (Integer target : Graphs.neighborListOf(grafo, source)) {
 			double peso = grafo.getEdgeWeight(grafo.getEdge(source, target));
-			//System.out.println(peso);
 			vicini.add(new ArcoVicino(source, target, peso));
 		}
 		return vicini;
+	}
+	
+	public int trovaDistrettoMinCriminalita(Year year) {
+		return this.dao.trovaDistrettoMinCriminalita(year);
+	}
+	
+	public Integer simula(Year year, Month month, int day, int numAgenti, int distr) {
+		Simulatore sim = new Simulatore();
+		sim.init(grafo, dao.loadEventsByDay(year, month, day), numAgenti, distr);
+		return sim.simula();
+		
 	}
 
 	public Graph<Integer, DefaultWeightedEdge> getGrafo() {
 		return grafo;
 	}
+	
 	
 	
 	

@@ -155,8 +155,7 @@ public class Event {
 		return "Event [incident_id=" + incident_id + ", offense_category_id=" + offense_category_id + ", reported_date="
 				+ reported_date + ", district_id=" + district_id + "]";
 	}
-	
-	
+
 	
 	
 }

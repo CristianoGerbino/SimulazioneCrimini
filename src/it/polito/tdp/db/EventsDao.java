@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -140,7 +143,7 @@ public class EventsDao {
 		}
 	}
 	
-	public Integer trovaDistretto(Year year) {
+	public Integer trovaDistrettoMinCriminalita(Year year) {
 		
 		String sql = "SELECT district_id, COUNT(*) as numEventi "+ 
 				"FROM EVENTS "+ 
@@ -164,6 +167,51 @@ public class EventsDao {
 			}
 			conn.close();
 			return id ;
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<Event> loadEventsByDay(Year year, Month month, Integer day) {
+		
+		String sql = "SELECT * "+ 
+				"FROM EVENTS "+ 
+				"WHERE YEAR(reported_date) = ? "+ 
+				"AND MONTH(reported_date) = ? "+
+				"AND DAY(reported_date) = ?";
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			List<Event> list = new LinkedList<Event>();
+			
+			st.setInt(1, year.getValue());
+			st.setInt(2, month.getValue());
+			st.setInt(3, day);
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+					list.add(new Event(res.getLong("incident_id"),
+							res.getInt("offense_code"),
+							res.getInt("offense_code_extension"), 
+							res.getString("offense_type_id"), 
+							res.getString("offense_category_id"),
+							res.getTimestamp("reported_date").toLocalDateTime(),
+							res.getString("incident_address"),
+							res.getDouble("geo_lon"),
+							res.getDouble("geo_lat"),
+							res.getInt("district_id"),
+							res.getInt("precinct_id"), 
+							res.getString("neighborhood_id"),
+							res.getInt("is_crime"),
+							res.getInt("is_traffic")));
+			}
+			conn.close();
+			return list ;
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
