@@ -32,22 +32,26 @@ public class Model {
 	
 	public void creaGrafo(Year year) {
 		grafo = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-		Graphs.addAllVertices(grafo, dao.listAllDistricts());
+		Graphs.addAllVertices(grafo, dao.listAllDistricts()); 
+		//Sarebbe stato meglio selezionare i distretti in relazione all'anno passato dall'utente
 		
 		Map<Integer, LatLng> map = new HashMap<Integer, LatLng>(dao.listAllCords(year));
 		
 		for (Integer i : map.keySet()) {
 			for (Integer o : map.keySet()) {
-				if (i != o) {
+				if (!i.equals(o)) {//Usare equals per Integer!!!! 
+					//meglio controllare anche se l'arco fosse già esistente
+					if (grafo.getEdge(i, o) == null) {
 				double distanza = LatLngTool.distance(map.get(i), map.get(o), LengthUnit.KILOMETER);
 				System.out.println(distanza);
 				Graphs.addEdge(grafo, i, o, distanza);
 				}
-			}	
-		}
+			}
+		}	
+	}
 		
 	
-	}
+}
 
 	
 	

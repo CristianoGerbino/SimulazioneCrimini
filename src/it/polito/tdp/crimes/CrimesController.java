@@ -85,7 +85,7 @@ public class CrimesController {
     void doPopolaGiorni(ActionEvent event) {
     	Month month = this.boxMese.getValue();
     	
-    	for (Integer i = 0; i<32; i++) {
+    	for (Integer i = 1; i<32; i++) {
     		if (month.equals(Month.FEBRUARY) && i == 29 ) 
     			break;
     		
